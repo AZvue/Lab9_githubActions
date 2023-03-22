@@ -1,5 +1,6 @@
 stages:
   - build
+  - deploy
 
 default:
   image: node:latest
@@ -26,3 +27,19 @@ build:
   artifacts:
     paths:
       - dist/*
+
+deploy:
+  stage: deploy
+  script:
+    - vercel --token $VERCEL_TOKEN --prod
+  when: manual
+
+deploy-prod:
+  stage: deploy
+  script:
+    - vercel --token $VERCEL_TOKEN --prod
+  when: manual
+  environment:
+    name: production
+    url: $VERCEL_URL
+
