@@ -32,7 +32,7 @@ deploy-prod:
   stage: deploy
   when: manual
   script:
-    - pnpm dlx vercel deploy --prod --cwd dist/ --token="${VERCEL_TOKEN}"
+    - pnpm dlx vercel deploy --prod --cwd dist/ --token=<puXAGBGDrFpwR0yedjG62SdJ>
   environment:
     name: production
     url: $VERCEL_URL
