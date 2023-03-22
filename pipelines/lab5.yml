@@ -28,12 +28,6 @@ build:
     paths:
       - dist/*
 
-deploy:
-  stage: deploy
-  script:
-    - vercel --token $VERCEL_TOKEN --prod
-  when: manual
-
 deploy-prod:
   stage: deploy
   script:
