@@ -1,6 +1,8 @@
 stages:
   - build
   - deploy
+  - qa
+  - prod
 
 workflow:
   rules:
@@ -20,6 +22,7 @@ default:
   before_script:
     - curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@7
     - pnpm config set store-dir .pnpm-store
+    - pnpm install @azure/static-web-apps-cli
 
 build:
   stage: build
@@ -32,3 +35,19 @@ build:
   artifacts:
     paths:
       - dist/*
+
+deploy-qa:
+  stage: qa
+  cache:
+    <<: *global_cache
+    policy: pull-push
+  script:
+    - pnpm swa deploy dist --deployment-token $AZURE_QA_TOKEN
+
+deploy-prod:
+  stage: prod
+  cache:
+    <<: *global_cache
+    policy: pull-push
+  script:
+    - pnpm swa deploy dist --deployment-token $AZURE_PROD_TOKEN
