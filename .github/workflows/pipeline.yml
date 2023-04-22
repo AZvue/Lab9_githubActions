@@ -1,17 +1,43 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: pipeline.yml CI/CD
 
 on:
   push:
-    branches: [ "lab9" ]
-  pull_request:
-    branches: [ "lab9" ]
+    branches:
+      - main
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name : test
-      run : echo "este"
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          path: '.'
+          
+      - name: Cache Dependencies
+        id: cache-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-build-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+          
+      - name: setup pnpm environment
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7.1.7
+            
+      - name: build
+        run: |
+          pnpm install
+          pnpm build
+          
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: vue2048
+          path: dist/
