@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - lab9
+  pull_request:
+    branches:
+      - lab9
 
 
 jobs:
@@ -37,7 +40,15 @@ jobs:
           pnpm build
           
       - name: Upload artifact
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v2
         with:
           name: vue2048
           path: dist/
+          
+      - name: Run tests
+        if: github.event_name == 'pull_request'
+        run: |
+          pnpm install
+          pnpm run lint
+          pnpm run test
