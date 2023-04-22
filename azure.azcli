@@ -1,0 +1,7 @@
+
+
+# az login
+#az group create --name rg-vue2048-QA --location francecentral --tags "Class=EI8IT213"
+#az staticwebapp create --name stapp-vue2048-QA --resource-group rg-vue2048-QA --location westeurope --tags "Class=EI8IT213"  --sku Free
+
+az staticwebapp secrets list --name stapp-vue2048-QA --query "properties.apiKey"
