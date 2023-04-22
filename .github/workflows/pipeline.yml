@@ -54,6 +54,8 @@ jobs:
         run : |
           echo "pnpm type-check"
           echo "pnpm eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name : Run Tests
         run: |
@@ -70,7 +72,7 @@ jobs:
     - name : download artifact
       uses: actions/download-artifact@v2.1.1
       with : 
-        name : artifact-build
+        name : vue2048
         path : ${{github.workspace}} 
     - name : deploy qa
       uses: Azure/static-web-apps-deploy@v1
