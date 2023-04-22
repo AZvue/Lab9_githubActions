@@ -8,7 +8,6 @@ on:
     branches:
       - lab9
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: '.'
-          
+
       - name: Cache Dependencies
         id: cache-dependencies
         uses: actions/cache@v2
@@ -28,27 +27,58 @@ jobs:
           key: ${{ runner.os }}-build-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-build-
-          
+
       - name: setup pnpm environment
         uses: pnpm/action-setup@v2
         with:
           version: 7.1.7
-            
+
       - name: build
         run: |
           pnpm install
           pnpm build
-          
+
       - name: Upload artifact
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v2
         with:
           name: vue2048
           path: dist/
-          
-      - name: Run tests
-        if: github.event_name == 'pull_request'
+
+  test:
+    if: ${{ github.event_name == 'pull_request' }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps: 
+      - name : Static Analysis
+        run : |
+          echo "pnpm type-check"
+          echo "pnpm eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+
+      - name : Run Tests
         run: |
-          pnpm install
+          pnpm install --frozen-lockfile
           pnpm run lint
           pnpm run test
+          
+  deploy:
+     runs-on: ubuntu-latest
+     needs: build
+     steps:
+     - name: Download artifact 
+       uses: actions/download-artifact@v3
+       with:
+         name: vue2048
+     - name: Deploy to prod 
+       uses: Azure/static-web-apps-deploy@v1
+       with:
+        action: upload
+        app-name: vue_2048_PROD
+        azure_static_web_apps_api_token: ${{ secrets.AZURE_TOKEN_PROD }}
+
+     - name: Deploy to qa
+       uses: Azure/static-web-apps-deploy@v1
+       with:
+        action: upload
+        app-name: vue_2048_QA
+        azure_static_web_apps_api_token: ${{ secrets.AZURE_TOKEN_QA }}
