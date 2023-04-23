@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - lab9
+  schedule:
+    - cron: '0 8 * * 1'
   workflow_dispatch:
     inputs:
       run-static-analysis:
@@ -61,7 +63,7 @@ jobs:
           retention-days: ${{ github.ref == 'refs/heads/lab9' && 7 || 1 }}
 
   test:
-    if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && inputs.run-tests == 'true' || github.event_name == 'workflow_dispatch' && inputs.run-static-analysis == 'true' }}
+    #if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && inputs.run-tests == 'true' || github.event_name == 'workflow_dispatch' && inputs.run-static-analysis == 'true' }}
     needs: build
     runs-on: ubuntu-latest
     steps: 
