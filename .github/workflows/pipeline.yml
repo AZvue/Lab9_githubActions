@@ -47,6 +47,9 @@ jobs:
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v2
+        with:
+          version: 7.5.0
+        
 
       - name: build
         run: |
