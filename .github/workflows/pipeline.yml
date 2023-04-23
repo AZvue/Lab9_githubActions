@@ -47,8 +47,6 @@ jobs:
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v2
-        with: 
-          shamefully-hoist: true
 
       - name: build
         run: |
