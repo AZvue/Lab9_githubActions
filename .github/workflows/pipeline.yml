@@ -33,21 +33,22 @@ jobs:
         with:
           path: '.'
 
-      - name: Cache Dependencies
+      - name: Setup Caches
         id: cache-dependencies
         uses: actions/cache@v2
         with:
           path: |
             ~/.pnpm-store
             node_modules
-          key: ${{ runner.os }}-build-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('**/pnpm-lock.yaml') }}-Vue2048
           restore-keys: |
             ${{ runner.os }}-build-
+          compression-level: 9
 
-      - name: setup pnpm environment
+      - name: Setup PNPM
         uses: pnpm/action-setup@v2
-        with:
-          version: 7.1.7
+        with: 
+          shamefully-hoist: true
 
       - name: build
         run: |
@@ -67,6 +68,15 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps: 
+    
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+
+      - name: Install dependencies
+        run: npm ci
+        
       - name: Install pnpm
         run: npm install -g pnpm
 
