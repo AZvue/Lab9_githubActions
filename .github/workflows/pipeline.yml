@@ -7,6 +7,20 @@ on:
   pull_request:
     branches:
       - lab9
+  workflow_dispatch:
+    inputs:
+      run-static-analysis:
+        description: 'Run static analysis ?'
+        required: false
+        default: true
+      run-tests:
+        description: 'Run tests ?'
+        required: false
+        default: true
+      run-Linter:
+        description: 'Run Linter ?'
+        required: false
+        default: true
 
 jobs:
   build:
@@ -47,22 +61,27 @@ jobs:
           retention-days: ${{ github.ref == 'refs/heads/lab9' && 7 || 1 }}
 
   test:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && inputs.run-tests == 'true' || github.event_name == 'workflow_dispatch' && inputs.run-static-analysis == 'true' }}
     needs: build
     runs-on: ubuntu-latest
     steps: 
-      - name : Static Analysis
-        run : |
-          echo "pnpm type-check"
-          echo "pnpm eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name : Run Tests
+      - name: Run Unit Tests
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && inputs.run-tests == 'true' 
         run: |
-          pnpm install --frozen-lockfile
-          pnpm run lint
-          pnpm run test
+          pnpm vitest
+          
+      - name: Run Linter
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && inputs.run-Linter == 'true'
+        run: |
+          pnpm eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore
+          
+      - name: Run static typing
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && inputs.run-static-analysis == 'true'
+        run: |
+          pnpm type-check
  
  
   deploy :
