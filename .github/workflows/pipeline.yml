@@ -32,7 +32,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: '.'
-
+      
+      - name: Check if files are in /docs
+        id: check-docs
+        run: |
+          if [[ $(git diff --name-only HEAD HEAD^) == *"/docs"* ]]; then
+            echo "Files updated in /docs, skipping pipeline"
+            exit 0
+          fi
+          
       - name: Setup Caches
         id: cache-dependencies
         uses: actions/cache@v2
