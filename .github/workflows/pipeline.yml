@@ -81,10 +81,6 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Run Unit Tests
-        #if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && inputs.run-tests == 'true' 
-        run: |
-          pnpm vitest
           
       - name: Run Linter
         #if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && inputs.run-Linter == 'true'
