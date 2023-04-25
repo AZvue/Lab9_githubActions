@@ -63,12 +63,6 @@ jobs:
         run: |
           pnpm install
           pnpm build
-          
-      - name: Copy artifact
-        if: always()
-        run: cp package.json dist/
-        working-directory: ${{ env.GITHUB_WORKSPACE }}
-        shell: bash
 
       - name: Upload artifact
         if: github.event_name == 'push'
@@ -86,6 +80,7 @@ jobs:
 
       - name: Install pnpm
         run: npm install -g pnpm
+         npm init
 
       - name: Run Unit Tests
         #if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && inputs.run-tests == 'true' 
