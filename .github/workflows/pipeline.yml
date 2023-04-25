@@ -63,6 +63,12 @@ jobs:
         run: |
           pnpm install
           pnpm build
+          
+      - name: Copy artifact
+        if: always()
+        run: cp package.json dist/
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
+        shell: bash
 
       - name: Upload artifact
         if: github.event_name == 'push'
