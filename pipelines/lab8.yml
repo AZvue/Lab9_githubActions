@@ -1,13 +1,7 @@
 stages:
   - build
-  - deploy
   - qa
-  - prod
-
-workflow:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
+  - production
 
 default:
   image: node:latest
@@ -38,16 +32,16 @@ build:
 
 deploy-qa:
   stage: qa
-  cache:
-    <<: *global_cache
-    policy: pull-push
+  environment:
+    name: qa
+    url: https://lemon-sky-0ff19c110.2.azurestaticapps.net
   script:
-    - pnpm swa deploy dist --deployment-token $AZURE_QA_TOKEN
+    - pnpm dlx @azure/static-web-apps-cli deploy ./dist --app-name stapp-vue2048-qa --env=production
 
-deploy-prod:
-  stage: prod
-  cache:
-    <<: *global_cache
-    policy: pull-push
+deploy-production:
+  stage: production
+  environment:
+    name: production
+    url: https://delightful-mushroom-03f3a5d03.2.azurestaticapps.net
   script:
-    - pnpm swa deploy dist --deployment-token $AZURE_PROD_TOKEN
+    - pnpm dlx @azure/static-web-apps-cli deploy ./dist --app-name stapp-vue2048-prod --env=production
